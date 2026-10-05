@@ -13,17 +13,17 @@ It turns long URLs into short codes and redirects visitors to the original URL.
 
 ## Run it locally
 
-Prerequisites: Java 17+, Maven, PostgreSQL.
+Prerequisites: Java 17+ and PostgreSQL. Maven is not needed: the included wrapper (`mvnw` / `mvnw.cmd`) downloads it.
 
 ```bash
 # 1. Create the database
 psql -U postgres -c "CREATE DATABASE urlshortener"
 
 # 2. Start the app (defaults: localhost:5432, user postgres / password postgres)
-mvn spring-boot:run
+./mvnw spring-boot:run        # Windows: .\mvnw.cmd spring-boot:run
 
 # Or point it at your own database
-DB_URL=jdbc:postgresql://localhost:5432/urlshortener DB_USERNAME=me DB_PASSWORD=secret mvn spring-boot:run
+DB_URL=jdbc:postgresql://localhost:5432/urlshortener DB_USERNAME=me DB_PASSWORD=secret ./mvnw spring-boot:run
 ```
 
 The `urls` table is created automatically on startup.
@@ -50,7 +50,7 @@ Open `http://localhost:8080/0d9A5mh` in a browser and you are redirected.
 ## Tests
 
 ```bash
-mvn test
+./mvnw test                   # Windows: .\mvnw.cmd test
 ```
 
 Tests use an in-memory H2 database, so PostgreSQL is not needed to run them.
