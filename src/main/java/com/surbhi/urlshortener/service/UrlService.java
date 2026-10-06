@@ -1,6 +1,7 @@
 package com.surbhi.urlshortener.service;
 
 import com.surbhi.urlshortener.exception.InvalidUrlException;
+import com.surbhi.urlshortener.exception.UrlExpiredException;
 import com.surbhi.urlshortener.exception.UrlNotFoundException;
 import com.surbhi.urlshortener.model.Url;
 import com.surbhi.urlshortener.repository.UrlRepository;
@@ -9,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 
 @Service
 public class UrlService {
@@ -17,26 +21,40 @@ public class UrlService {
 
     private final UrlRepository urlRepository;
     private final ShortCodeGenerator codeGenerator;
+    private final Clock clock;
 
-    public UrlService(UrlRepository urlRepository, ShortCodeGenerator codeGenerator) {
+    public UrlService(UrlRepository urlRepository, ShortCodeGenerator codeGenerator, Clock clock) {
         this.urlRepository = urlRepository;
         this.codeGenerator = codeGenerator;
+        this.clock = clock;
     }
 
     @Transactional
-    public Url shorten(String originalUrl) {
+    public Url shorten(String originalUrl, Integer expiresInDays) {
         String url = validate(originalUrl.trim());
+        Instant expiresAt = expiresInDays == null ? null : clock.instant().plus(Duration.ofDays(expiresInDays));
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             String code = codeGenerator.generate();
             if (!urlRepository.existsByShortCode(code)) {
-                return urlRepository.save(new Url(code, url));
+                return urlRepository.save(new Url(code, url, expiresAt));
             }
         }
         throw new IllegalStateException("Could not generate a unique short code");
     }
 
+    /** Looks up a link for redirecting; throws if it is unknown or expired. */
     @Transactional(readOnly = true)
     public Url resolve(String shortCode) {
+        Url url = find(shortCode);
+        if (url.isExpired(clock.instant())) {
+            throw new UrlExpiredException(shortCode);
+        }
+        return url;
+    }
+
+    /** Looks up a link regardless of expiry, for stats. */
+    @Transactional(readOnly = true)
+    public Url find(String shortCode) {
         return urlRepository.findByShortCode(shortCode)
                 .orElseThrow(() -> new UrlNotFoundException(shortCode));
     }
