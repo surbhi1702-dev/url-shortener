@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="container">
+    <h1>URL Shortener</h1>
+    <p class="subtitle">Paste a long link, get a short one, and track its clicks.</p>
+
+    <section class="card">
+        <h2>Shorten a link</h2>
+        <form id="shorten-form">
+            <label for="url">Long URL</label>
+            <input id="url" type="url" placeholder="https://example.com/a/very/long/link" required>
+
+            <label for="expiry">Expires</label>
+            <select id="expiry">
+                <option value="">Never</option>
+                <option value="1">In 1 day</option>
+                <option value="7">In 7 days</option>
+                <option value="30">In 30 days</option>
+                <option value="365">In 1 year</option>
+            </select>
+
+            <button type="submit">Shorten</button>
+        </form>
+        <p id="shorten-error" class="error" hidden></p>
+
+        <div id="result" class="result" hidden>
+            <p>Your short link:</p>
+            <div class="short-link">
+                <a id="short-url" href="#" target="_blank" rel="noopener"></a>
+                <button id="copy-btn" type="button" class="secondary">Copy</button>
+            </div>
+            <p id="expires-text" class="muted"></p>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Click analytics</h2>
+        <form id="stats-form">
+            <label for="code">Short code or short link</label>
+            <input id="code" type="text" placeholder="e.g. 0d9A5mh" required>
+            <button type="submit">Get stats</button>
+        </form>
+        <p id="stats-error" class="error" hidden></p>
+
+        <div id="stats" hidden>
+            <div class="stat-grid">
+                <div class="stat"><span class="stat-value" id="total-clicks"></span><span class="stat-label">Total clicks</span></div>
+                <div class="stat"><span class="stat-value" id="status"></span><span class="stat-label">Status</span></div>
+                <div class="stat"><span class="stat-value small" id="last-click"></span><span class="stat-label">Last click</span></div>
+            </div>
+            <p class="muted">Original: <a id="original-url" target="_blank" rel="noopener"></a></p>
+
+            <h3>Clicks in the last 7 days</h3>
+            <div id="chart" class="chart"></div>
+
+            <h3>Top referrers</h3>
+            <ul id="referrers" class="referrers"></ul>
+        </div>
+    </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

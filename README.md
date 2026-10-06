@@ -1,6 +1,6 @@
 # URL Shortener
 
-A URL shortening service built with **Java 17, Spring Boot 3, PostgreSQL and REST APIs**.
+A URL shortening service built with **Java 17, Spring Boot 3, PostgreSQL, REST APIs and an HTML/CSS/JavaScript frontend**.
 It turns long URLs into short codes and redirects visitors to the original URL.
 
 ## Features
@@ -33,6 +33,10 @@ DB_URL=jdbc:postgresql://localhost:5432/urlshortener DB_USERNAME=me DB_PASSWORD=
 The `urls` table is created automatically on startup.
 
 ## Try it
+
+Open **http://localhost:8080** in your browser to shorten links and view click stats.
+
+Or use the API directly:
 
 ```bash
 curl -X POST http://localhost:8080/api/shorten \
@@ -106,6 +110,8 @@ src/main/java/com/surbhi/urlshortener
 ├── dto/          Request/response bodies
 ├── config/       Clock bean and scheduling
 └── exception/    Error types and global handler
+
+src/main/resources/static/   Frontend (index.html, style.css, app.js)
 ```
 
 ## Roadmap
@@ -113,5 +119,4 @@ src/main/java/com/surbhi/urlshortener
 - [x] **Milestone 1:** shorten + redirect with PostgreSQL
 - [x] **Milestone 2:** URL expiration (`expiresAt` per link, 410 Gone once expired, scheduled cleanup)
 - [x] **Milestone 3:** click analytics (count + per-click log, `GET /api/urls/{code}/stats`)
-- [ ] **Milestone 4:** HTML/CSS/JavaScript frontend to shorten links and view stats
-- [ ] **Scale:** Redis cache for redirects, async click recording, load testing with k6
+- [x] **Milestone 4:** HTML/CSS/JavaScript frontend to shorten links and view stats
